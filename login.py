@@ -1,6 +1,7 @@
 import hashlib
-import options
+import login_options
 import connector
+from admin import admin_options
 
 
 def do_login():
@@ -15,12 +16,20 @@ def do_login():
     result = cur.fetchone()
     count = result[0]
     if count == 1:
-        print("Login successful!")
+        cur.execute("SELECT user_type FROM users WHERE username = %s AND password = %s", (username, encoded_password))
+        user_type = cur.fetchone()[0]
+        if user_type == "admin":
+            print("Admin login successful!")
+            admin_options.print_admin_options()
+        else:
+            print("Login successful!")
+            user_options.print_user_options()
     else:
         print("Invalid credentials. Please try again.")
-        options.proceed_login()
+        login_options.proceed_login()
 
     conn.close()
+
 
 
 def do_signup():
