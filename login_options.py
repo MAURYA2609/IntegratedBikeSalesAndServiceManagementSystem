@@ -4,14 +4,16 @@ import curses
 
 options = [
     "Login",
-    "Signup"
+    "Signup",
+    "Exit the application."
 ]
 
 selected_option = 0
 
 
 def print_options(stdscr, index):
-    stdscr.addstr("What do you want to do ?:\n\n")
+    stdscr.clear()
+    stdscr.addstr("What do you want to do:\n\n")
     for i, option in enumerate(options):
         radio = "( )" if i != index else "(*)"
         stdscr.addstr(f"{radio} {option}\n")
@@ -24,6 +26,9 @@ def proceed_login():
         login.do_login()
     elif selected_option == 1:
         login.do_signup()
+    elif selected_option == 2:
+        print("Thank you for using our system.")
+        return
 
         
 
