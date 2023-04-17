@@ -1,7 +1,6 @@
-import connector
+import options
+import curses
 
-# Press the green button in the gutter to run the script.
+# Main method where the program starts.
 if __name__ == '__main__':
-    connector.connect_to_database()
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    options.proceed_login()
