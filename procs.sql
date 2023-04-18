@@ -15,35 +15,35 @@ BEGIN
     DECLARE showroom_count INT;
     DECLARE engine_count INT;
     DECLARE policy_count INT;
-    
+
     -- Check if the showroom_id exists
     SELECT COUNT(*) INTO showroom_count FROM Showroom WHERE showroomID = showroom_id;
-    
+
     IF showroom_count = 0 THEN
         -- If the showroom_id doesn't exist, create a new tuple in the Showroom table
         INSERT INTO Showroom (showroomID) VALUES (showroom_id);
     END IF;
-    
+
     -- Check if the policy_number exists
     SELECT COUNT(*) INTO policy_count FROM InsurancePolicy WHERE policyNumber = policy_number;
-    
+
     IF policy_count = 0 THEN
         -- If the policy_number doesn't exist, create a new tuple in the InsurancePolicy table
         INSERT INTO InsurancePolicy (policyNumber) VALUES (policy_number);
     END IF;
-    
+
     -- Check if the engine_id exists
     SELECT COUNT(*) INTO engine_count FROM BikeEngine WHERE engineID = engine_id;
-    
+
     IF engine_count = 0 THEN
         -- If the engine_id doesn't exist, create a new tuple in the BikeEngine table
         INSERT INTO BikeEngine (engineID) VALUES (engine_id);
     END IF;
-    
+
     -- Insert the new bike into the Bike table
     INSERT INTO Bike (bikeID, bikeModelName, bikeManufacturingYear, bikePrice, bikeColor, bikeDescription, engineID, showroomID, policyNumber)
     VALUES (bike_id, bike_model_name, bike_manufacturing_year, bike_price, bike_color, bike_description, engine_id, showroom_id, policy_number);
-    
+
 END $$
 DELIMITER ;
 
@@ -73,10 +73,10 @@ BEGIN
     DECLARE engine_count INT;
     DECLARE policy_count INT;
     DECLARE bike_count INT;
-    
+
     -- check if the bike with given id exists or not
     SELECT COUNT(*) INTO bike_count FROM Bike WHERE bikeID = bike_id;
-    
+
     IF bike_count = 0 THEN
         -- If the bike_id doesn't exist, show a message
         SELECT CONCAT('Bike with ID ', in_bike_id, ' was not found.') AS Message;
@@ -106,7 +106,7 @@ BEGIN
     END IF;
 
     -- Update the bike in the Bike table
-    UPDATE Bike 
+    UPDATE Bike
     SET bikeModelName = IFNULL(NULLIF(in_bike_model_name,''), bikeModelName),
         bikeManufacturingYear = IFNULL(NULLIF(in_bike_manufacturing_year,0), bikeManufacturingYear),
         bikePrice = IFNULL(NULLIF(in_bike_price,0.0), bikePrice),
@@ -126,10 +126,10 @@ DROP PROCEDURE IF EXISTS delete_bike$$
 CREATE PROCEDURE delete_bike(IN bike_id INT)
 BEGIN
     DECLARE bike_count INT;
-    
+
     -- Check if the bike_id exists
     SELECT COUNT(*) INTO bike_count FROM Bike WHERE bikeID = bike_id;
-    
+
     IF bike_count = 0 THEN
         -- If the bike_id doesn't exist, show a message
         SELECT 'The bike with given ID  does not exist' AS Message;
@@ -234,6 +234,8 @@ DELIMITER ;
     DELIMITER ;
 
 
+
+
     DELIMITER //
     DROP PROCEDURE IF EXISTS delete_showroom //
     CREATE PROCEDURE delete_showroom(showroom_id INT)
@@ -249,4 +251,3 @@ DELIMITER ;
     END IF;
     END //
     DELIMITER ;
-

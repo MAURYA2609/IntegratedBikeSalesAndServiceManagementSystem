@@ -2,7 +2,7 @@ import hashlib
 import login_options
 import connector
 from admin import admin_options
-
+from customer import customer_options
 
 def do_login():
     conn = connector.connect_to_database()
@@ -19,9 +19,9 @@ def do_login():
         if result == "admin":
             print("Admin login successful!")
             admin_options.print_admin_options()
-        else:
-            print("Login successful!")
-            user_options.print_user_options()
+        elif result == "customer":
+            print("Customer Login successful!")
+            customer_options.print_customer_options()
     else:
         print("Invalid credentials. Please try again.")
         login_options.proceed_login()

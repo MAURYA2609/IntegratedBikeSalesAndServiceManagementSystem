@@ -6,7 +6,7 @@ def connect_to_database():
     try:
         conn = pymysql.connect(
             host="localhost",
-            password="payruam",
+            password="MyNewPass",
             user="root",
             database="ibssms"
         )
