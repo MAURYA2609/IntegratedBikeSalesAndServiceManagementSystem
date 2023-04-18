@@ -27,7 +27,7 @@ CREATE TABLE BikeEngine(
 	engineDisplacement INT,
 	engineWeight INT,
 	engineFuelType VARCHAR(255),
-	enginefuelEfficiency VARCHAR(255),
+	engineFuelEfficiency VARCHAR(255),
 	engineTorque INT,
 	engineHorsePower INT
 );
@@ -35,21 +35,11 @@ CREATE TABLE BikeEngine(
 CREATE TABLE Service(
 	serviceID INT PRIMARY KEY NOT NULL,
 	serviceOnDate DATE,
-	serviceDetails VARCHAR(255),
+	serviceDescription VARCHAR(255),
 	serviceCharges INT,
 	newPartsCharges INT,
 	serviceType ENUM('Paid', 'Unpaid')
 );
-
-CREATE TABLE PaymentDetails (
-	paymentDetailsID INT PRIMARY KEY NOT NULL,
-	paymentMethod ENUM('Debit Card', 'Credit Card'),
-	paymentDate DATE,
-	paymentAmount INT,
-	invoiceNumber INT
-);
-
-
 
 CREATE TABLE Showroom(
 	showroomID INT PRIMARY KEY NOT NULL,
@@ -69,7 +59,7 @@ CREATE TABLE Employees(
 	employeeDesignation VARCHAR(255),
 	employeeJoiningDate DATE,
 	showroomID INT,
-	
+
 	CONSTRAINT employee_showroom_fk FOREIGN KEY (showroomID) REFERENCES Showroom(showroomID)
 		ON UPDATE RESTRICT
 		ON DELETE RESTRICT
@@ -86,17 +76,17 @@ CREATE TABLE EmployeeManager(
 CREATE TABLE InsurancePolicy (
 	policyNumber INT PRIMARY KEY NOT NULL,
 	insStartDate DATE,
-	insEndDate DATE, 
+	insEndDate DATE,
 	insCoverageDetails VARCHAR(255),
 	insPremium INT,
 	noOfServices INT,
 	employeeID INT,
 	taxationID INT,
-	
+
 	CONSTRAINT policy_manager_fk FOREIGN KEY (employeeID) REFERENCES EmployeeManager(employeeID)
 		ON UPDATE CASCADE
 		ON DELETE SET NULL,
-		
+
 	CONSTRAINT policy_company_fk FOREIGN KEY (taxationID) REFERENCES InsuranceCompany(taxationID)
 		ON UPDATE CASCADE
 		ON DELETE CASCADE
@@ -114,15 +104,15 @@ CREATE TABLE Bike(
 	engineID INT ,
 	showroomID INT,
 	policyNumber INT ,
-	
+
 	CONSTRAINT bike_engine_fk FOREIGN KEY (engineID) REFERENCES BikeEngine(engineID)
 		ON UPDATE CASCADE
 		ON DELETE SET NULL,
-		
+
 	CONSTRAINT bike_showroom_fk FOREIGN KEY (showroomID) REFERENCES Showroom(showroomID)
 		ON UPDATE CASCADE
 		ON DELETE SET NULL,
-		
+
 	CONSTRAINT bike_policy_fk FOREIGN KEY (policyNumber) REFERENCES InsurancePolicy(policyNumber)
 		ON UPDATE CASCADE
 		ON DELETE SET NULL
@@ -134,10 +124,10 @@ CREATE TABLE Booking (
 	bookingDate DATE,
 	deliveryDate DATE,
 	isDelivered BOOLEAN,
-	paymentDetailsID INT ,
-	CONSTRAINT booking_payment_fk FOREIGN KEY (paymentDetailsID) REFERENCES PaymentDetails(paymentDetailsID)
-		ON UPDATE CASCADE
-		ON DELETE SET NULL
+	paymentMethod ENUM('Debit Card', 'Credit Card'),
+	paymentDate DATE,
+	paymentAmount INT,
+	invoiceNumber INT
 );
 
 
@@ -156,11 +146,11 @@ CREATE TABLE ServiceAppointment(
 	approxServiceDetails VARCHAR(255),
 	policyNumber INT,
 	serviceID INT NOT NULL,
-	
+
 	CONSTRAINT appointment_policy_fk FOREIGN KEY (policyNumber) REFERENCES InsurancePolicy(policyNumber)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
-		
+
 	CONSTRAINT service_appointment_fk FOREIGN KEY (serviceID) REFERENCES Service(serviceID)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE
@@ -170,15 +160,15 @@ CREATE TABLE schedules(
 	customerID INT,
 	bikeID INT,
 	appointmentID INT,
-	
+
 	CONSTRAINT schedule_customer_fk FOREIGN KEY (customerID) REFERENCES Customer(customerID)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
-		
+
 	CONSTRAINT schedule_bike_fk FOREIGN KEY (bikeID) REFERENCES Bike(bikeID)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
-		
+
 	CONSTRAINT schedule_appointment_fk FOREIGN KEY (appointmentID) REFERENCES ServiceAppointment(appointmentID)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE
@@ -187,17 +177,17 @@ CREATE TABLE schedules(
 CREATE TABLE makes (
 	bikeID INT,
 	customerID INT,
-	bookingiD INT,
-	
+	bookingID INT,
+
 	CONSTRAINT makes_bike_fk FOREIGN KEY (bikeID) REFERENCES Bike(bikeID)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
-		
+
 	CONSTRAINT makes_customer_fk FOREIGN KEY (customerID) REFERENCES Customer(customerID)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
-		
-	CONSTRAINT makes_booking_fk FOREIGN KEY (bookingiD) REFERENCES Booking(bookingiD)
+
+	CONSTRAINT makes_booking_fk FOREIGN KEY (bookingID) REFERENCES Booking(bookingID)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE
 );
@@ -209,7 +199,7 @@ INSERT INTO InsuranceCompany (taxationID, companyName, companyAddress, companyEm
 (104, 'LMN Insurance', '321 Elm St, Anytown, USA', 'info@lmninsurance.com', 'www.lmninsurance.com', 4, 'Motorcycle Insurance'),
 (105, 'EFG Insurance', '567 Cedar Rd, Somewhere, USA', 'info@efginsurance.com', 'www.efginsurance.com', 3, 'Motorcycle Insurance');
 
-INSERT INTO BikeEngine (engineID, manufacturingYear, engineType, engineDisplacement, engineWeight, engineFuelType, enginefuelEfficiency, engineTorque, engineHorsePower) VALUES
+INSERT INTO BikeEngine (engineID, manufacturingYear, engineType, engineDisplacement, engineWeight, engineFuelType, engineFuelEfficiency, engineTorque, engineHorsePower) VALUES
 (1, 2022, 'V-twin', 1200, 150, 'Petrol', '20 km/l', 100, 100),
 (2, 2021, 'Inline-four', 1000, 120, 'Petrol', '18 km/l', 90, 120),
 (3, 2023, 'Parallel-twin', 650, 80, 'Petrol', '25 km/l', 70, 80),
@@ -217,8 +207,8 @@ INSERT INTO BikeEngine (engineID, manufacturingYear, engineType, engineDisplacem
 (5, 2020, 'V-twin', 1600, 200, 'Petrol', '15 km/l', 150, 160);
 
 
-INSERT INTO Service (serviceID, serviceOnDate, serviceDetails, serviceCharges, newPartsCharges, serviceType)
-VALUES 
+INSERT INTO Service (serviceID, serviceOnDate, serviceDescription, serviceCharges, newPartsCharges, serviceType)
+VALUES
 	(1, '2022-01-15', 'Oil change and filter replacement', 50, 20, 'Paid'),
 	(2, '2022-02-28', 'Brake pads replacement', 100, 60, 'Paid'),
 	(3, '2022-03-12', 'Chain cleaning and adjustment', 30, 0, 'Unpaid'),
@@ -227,16 +217,9 @@ VALUES
 
 
 
-INSERT INTO PaymentDetails (paymentDetailsID, paymentMethod, paymentDate, paymentAmount, invoiceNumber)
-VALUES
-(1, 'Debit Card', '2022-01-01', 1000, 12345),
-(2, 'Credit Card', '2022-01-02', 2000, 12346),
-(3, 'Debit Card', '2022-01-03', 3000, 12347),
-(4, 'Credit Card', '2022-01-04', 4000, 12348),
-(5, 'Debit Card', '2022-01-05', 5000, 12349);
 
 INSERT INTO Showroom (showroomID, showroomName, showroomAddress, showroomEmail, showroomPhone)
-VALUES 
+VALUES
 (1, 'ABC Motors', '123 Main St', 'abc@example.com', 1234567890),
 (2, 'XYZ Bikes', '456 Oak Ave', 'xyz@example.com', 9876543210),
 (3, 'PQR Motors', '789 Elm St', 'pqr@example.com', 5551234567),
@@ -255,8 +238,8 @@ INSERT INTO Employees(employeeID, employeeName, employeePhone, employeeEmail, em
 INSERT INTO EmployeeManager(employeeID) VALUES (101), (102), (103), (104), (105);
 
 
-INSERT INTO InsurancePolicy (policyNumber, insStartDate, insEndDate, insCoverageDetails, insPremium, noOfServices, employeeID, taxationID) 
-VALUES 
+INSERT INTO InsurancePolicy (policyNumber, insStartDate, insEndDate, insCoverageDetails, insPremium, noOfServices, employeeID, taxationID)
+VALUES
 	(1, '2023-01-01', '2023-12-31', 'Health insurance', 1000, 12, 101, 101),
 	(2, '2023-02-01', '2023-12-31', 'Life insurance', 2000, 6, 102, 102),
 	(3, '2023-03-01', '2023-12-31', 'Home insurance', 1500, 9, 103, 103),
@@ -283,8 +266,8 @@ VALUES
 
 
 
-INSERT INTO ServiceAppointment (appointmentID, appointmentDate, appointmentTime, approxServiceDetails, policyNumber, serviceID) 
-VALUES 
+INSERT INTO ServiceAppointment (appointmentID, appointmentDate, appointmentTime, approxServiceDetails, policyNumber, serviceID)
+VALUES
 	(1, '2022-05-01', '10:00:00', 'Oil change, Brake pad replacement', 1, 3),
 	(2, '2022-05-03', '14:00:00', 'Chain adjustment, Tyre rotation', 2, 4),
 	(3, '2022-05-05', '11:00:00', 'Engine tuning, Spark plug replacement', 3, 2),
@@ -292,21 +275,21 @@ VALUES
 	(5, '2022-05-10', '13:00:00', 'Fuel system cleaning, Air filter replacement', 5, 5);
 
 
-INSERT INTO schedules (customerID, bikeID, appointmentID) 
-VALUES 
+INSERT INTO schedules (customerID, bikeID, appointmentID)
+VALUES
 	(1, 1, 1),
 	(2, 3, 2),
 	(3, 5, 3),
 	(4, 2, 4),
 	(5, 4, 5);
 
-INSERT INTO Booking (bookingID, bookingDate, deliveryDate, isDelivered, paymentDetailsID)
-VALUES 
-    (1, '2023-01-01', '2023-01-10', 1, 1),
-    (2, '2023-01-02', '2023-01-11', 1, 2),
-    (3, '2023-01-03', '2023-01-12', 0, 3),
-    (4, '2023-01-04', '2023-01-13', 0, 3),
-    (5, '2023-01-05', '2023-01-14', 1, 4);
+INSERT INTO Booking (bookingID, bookingDate, deliveryDate, isDelivered, paymentMethod, paymentDate, paymentAmount, invoiceNumber)
+VALUES
+    (1, '2023-01-01', '2023-01-10', 1, 'Debit Card', '2022-01-01', 1000, 12345),
+    (2, '2023-01-02', '2023-01-11', 1, 'Credit Card', '2022-01-02', 2000, 12346),
+    (3, '2023-01-03', '2023-01-12', 0, 'Debit Card', '2022-01-03', 3000, 12347),
+    (4, '2023-01-04', '2023-01-13', 0, 'Credit Card', '2022-01-04', 4000, 12348),
+    (5, '2023-01-05', '2023-01-14', 1, 'Debit Card', '2022-01-05', 5000, 12349);
 
 
 INSERT INTO makes (bikeID, customerID, bookingiD)
@@ -316,4 +299,3 @@ VALUES
 (3, 3, 3),
 (4, 4, 4),
 (5, 5, 5);
-
