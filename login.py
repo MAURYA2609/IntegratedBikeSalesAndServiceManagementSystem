@@ -5,19 +5,18 @@ from admin import admin_options
 
 
 def do_login():
-    admin_options.print_admin_options()
     conn = connector.connect_to_database()
     username = input("Enter username : ")
     password = input("Enter password : ")
     encoded_password = hashlib.sha256(password.encode()).hexdigest()
 
     cur = conn.cursor()
-    cur.callproc('authenticate_user', [username, encoded_password, '@p_user_type'])
+    cur.callproc('authenticate_user', (username, encoded_password, ))
 
-    result = cur.fetchone()
+    result = cur.fetchone()[0]
+
     if result is not None:
-        user_type = result[0]
-        if user_type == "admin":
+        if result == "admin":
             print("Admin login successful!")
             admin_options.print_admin_options()
         else:

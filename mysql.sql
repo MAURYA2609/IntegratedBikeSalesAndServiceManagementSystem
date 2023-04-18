@@ -7,7 +7,7 @@ create table users(
 	id integer PRIMARY KEY NOT NULL auto_increment,
 	username varchar(255) not null,
 	password varchar(255) not null,
-	user_type varchar(255) default "admin"
+	user_type varchar(255) default "customer"
 );
 
 CREATE TABLE InsuranceCompany (
