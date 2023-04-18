@@ -12,13 +12,11 @@ def do_login():
     encoded_password = hashlib.sha256(password.encode()).hexdigest()
 
     cur = conn.cursor()
-    cur.execute("SELECT COUNT(*) FROM users WHERE username = %s AND password = %s", (username, encoded_password))
+    cur.callproc('authenticate_user', [username, encoded_password, '@p_user_type'])
 
     result = cur.fetchone()
-    count = result[0]
-    if count == 1:
-        cur.execute("SELECT user_type FROM users WHERE username = %s AND password = %s", (username, encoded_password))
-        user_type = cur.fetchone()[0]
+    if result is not None:
+        user_type = result[0]
         if user_type == "admin":
             print("Admin login successful!")
             admin_options.print_admin_options()
@@ -31,8 +29,6 @@ def do_login():
 
     conn.close()
 
-
-
 def do_signup():
     conn = connector.connect_to_database()
     username = input("Enter username : ")
@@ -40,7 +36,7 @@ def do_signup():
     encoded_password = hashlib.sha256(password.encode()).hexdigest()
 
     cur = conn.cursor()
-    cur.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, encoded_password))
+    cur.callproc('signup_user', (username, encoded_password))
 
     conn.commit()
     conn.close()
