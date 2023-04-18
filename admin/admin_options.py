@@ -1,5 +1,5 @@
 import curses
-from admin import insurance_company
+from admin import insurance_company, plotSales, plotMonthlyRevenue
 from admin import handle_employees
 from admin import handle_showrooms
 from admin import handle_bikes
@@ -8,7 +8,9 @@ admin_options = [
     "Insurance Company",
     "Handle Bikes",
     "Handle Employees",
-    "Handle Showrooms"
+    "Handle Showrooms",
+    "Sales Chart",
+    "Monthly Revenue"
 ]
 
 selected_option = 0
@@ -33,6 +35,10 @@ def print_admin_options():
         handle_employees.start()
     elif selected_option == 3:
         handle_showrooms.start()
+    elif selected_option == 4:
+        plotSales.start()
+    elif selected_option == 5:
+        plotMonthlyRevenue.start()
 
 
 def main(stdscr):
