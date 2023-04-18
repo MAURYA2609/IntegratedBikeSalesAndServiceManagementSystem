@@ -7,7 +7,7 @@ create table users(
 	id integer PRIMARY KEY NOT NULL auto_increment,
 	username varchar(255) not null,
 	password varchar(255) not null,
-	user_type varchar(255) default "customer"
+	user_type varchar(255) default "admin"
 );
 
 CREATE TABLE InsuranceCompany (
@@ -91,7 +91,7 @@ CREATE TABLE InsurancePolicy (
 	insPremium INT,
 	noOfServices INT,
 	employeeID INT,
-	taxationID INT NOT NULL,
+	taxationID INT,
 	
 	CONSTRAINT policy_manager_fk FOREIGN KEY (employeeID) REFERENCES EmployeeManager(employeeID)
 		ON UPDATE CASCADE

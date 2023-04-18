@@ -26,14 +26,13 @@ def add_bike():
     showroom_id = input("Enter showroom ID: ")
     policy_number = input("Enter policy number: ")
 
-    cur.execute("""INSERT INTO Bike
-                (bikeID, bikeModelName, bikeManufacturingYear, bikePrice, bikeColor, bikeDescription, engineID, showroomID, policyNumber)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-                (bike_id, bike_model_name, bike_manufacturing_year, bike_price, bike_color, bike_description, engine_id, showroom_id, policy_number))
-
+    # Call the stored procedure to add the bike
+    cur.callproc('add_bike', (bike_id, bike_model_name, bike_manufacturing_year, bike_price, bike_color, bike_description, engine_id, showroom_id, policy_number))
+    
     conn.commit()
     print("Bike added successfully!")
     conn.close()
+
 
 def read_bike():
     conn = connector.connect_to_database()

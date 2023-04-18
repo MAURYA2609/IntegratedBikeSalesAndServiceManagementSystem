@@ -1,3 +1,56 @@
+DELIMITER $$
+DROP PROCEDURE IF EXISTS add_bike $$
+CREATE PROCEDURE add_bike(
+    IN bike_id INT,
+    IN bike_model_name VARCHAR(255),
+    IN bike_manufacturing_year INT,
+    IN bike_price FLOAT,
+    IN bike_color VARCHAR(255),
+    IN bike_description TEXT,
+    IN engine_id INT,
+    IN showroom_id INT,
+    IN policy_number INT
+)
+BEGIN
+    DECLARE showroom_count INT;
+    DECLARE engine_count INT;
+    DECLARE policy_count INT;
+
+    -- Check if the showroom_id exists
+    SELECT COUNT(*) INTO showroom_count FROM Showroom WHERE showroomID = showroom_id;
+
+    IF showroom_count = 0 THEN
+        -- If the showroom_id doesn't exist, create a new tuple in the Showroom table
+        INSERT INTO Showroom (showroomID) VALUES (showroom_id);
+    END IF;
+
+    -- Check if the policy_number exists
+    SELECT COUNT(*) INTO policy_count FROM InsurancePolicy WHERE policyNumber = policy_number;
+
+    IF policy_count = 0 THEN
+        -- If the policy_number doesn't exist, create a new tuple in the InsurancePolicy table
+        INSERT INTO InsurancePolicy (policyNumber) VALUES (policy_number);
+    END IF;
+
+    -- Check if the engine_id exists
+    SELECT COUNT(*) INTO engine_count FROM BikeEngine WHERE engineID = engine_id;
+
+    IF engine_count = 0 THEN
+        -- If the engine_id doesn't exist, create a new tuple in the BikeEngine table
+        INSERT INTO BikeEngine (engineID) VALUES (engine_id);
+    END IF;
+
+    -- Insert the new bike into the Bike table
+    INSERT INTO Bike (bikeID, bikeModelName, bikeManufacturingYear, bikePrice, bikeColor, bikeDescription, engineID, showroomID, policyNumber)
+    VALUES (bike_id, bike_model_name, bike_manufacturing_year, bike_price, bike_color, bike_description, engine_id, showroom_id, policy_number);
+
+END $$
+DELIMITER ;
+
+
+
+
+
 DELIMITER //
 DROP PROCEDURE IF EXISTS authenticate_user //
 CREATE PROCEDURE authenticate_user (
