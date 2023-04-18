@@ -16,8 +16,7 @@ CREATE TABLE InsuranceCompany (
 	companyAddress VARCHAR(255),
 	companyEmail VARCHAR(255),
 	companyWebsite VARCHAR(255),
-	companyRating INT,
-	policyTypes VARCHAR(255)
+	companyRating INT
 );
 
 CREATE TABLE BikeEngine(
@@ -27,18 +26,17 @@ CREATE TABLE BikeEngine(
 	engineDisplacement INT,
 	engineWeight INT,
 	engineFuelType VARCHAR(255),
-	engineFuelEfficiency VARCHAR(255),
+	enginefuelEfficiency VARCHAR(255),
 	engineTorque INT,
 	engineHorsePower INT
 );
 
 CREATE TABLE Service(
 	serviceID INT PRIMARY KEY NOT NULL,
-	serviceOnDate DATE,
-	serviceDescription VARCHAR(255),
+	serviceName VARCHAR(255),
 	serviceCharges INT,
 	newPartsCharges INT,
-	serviceType ENUM('Paid', 'Unpaid')
+	serviceType VARCHAR(255)
 );
 
 CREATE TABLE Showroom(
@@ -98,9 +96,9 @@ CREATE TABLE Bike(
 	bikeID INT PRIMARY KEY NOT NULL,
 	bikeModelName VARCHAR(255),
 	bikeManufacturingYear INT,
-	bikePrice INT,
+	bikePrice FLOAT,
 	bikeColor VARCHAR(255),
-	bikeDescription VARCHAR(255),
+	bikeDescription TEXT,
 	engineID INT ,
 	showroomID INT,
 	policyNumber INT ,
@@ -145,13 +143,21 @@ CREATE TABLE ServiceAppointment(
 	appointmentTime TIME,
 	approxServiceDetails VARCHAR(255),
 	policyNumber INT,
-	serviceID INT NOT NULL,
 
 	CONSTRAINT appointment_policy_fk FOREIGN KEY (policyNumber) REFERENCES InsurancePolicy(policyNumber)
 		ON DELETE RESTRICT
+		ON UPDATE CASCADE
+);
+
+CREATE TABLE leadsTo (
+	serviceID INT,
+    appointmentID INT,
+
+    CONSTRAINT appointment_fk FOREIGN KEY (appointmentID) REFERENCES ServiceAppointment(appointmentID)
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 
-	CONSTRAINT service_appointment_fk FOREIGN KEY (serviceID) REFERENCES Service(serviceID)
+	CONSTRAINT service_fk FOREIGN KEY (serviceID) REFERENCES Service(serviceID)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE
 );
@@ -177,7 +183,7 @@ CREATE TABLE schedules(
 CREATE TABLE makes (
 	bikeID INT,
 	customerID INT,
-	bookingID INT,
+	bookingiD INT,
 
 	CONSTRAINT makes_bike_fk FOREIGN KEY (bikeID) REFERENCES Bike(bikeID)
 		ON DELETE RESTRICT
@@ -187,19 +193,19 @@ CREATE TABLE makes (
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 
-	CONSTRAINT makes_booking_fk FOREIGN KEY (bookingID) REFERENCES Booking(bookingID)
+	CONSTRAINT makes_booking_fk FOREIGN KEY (bookingiD) REFERENCES Booking(bookingiD)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE
 );
 
-INSERT INTO InsuranceCompany (taxationID, companyName, companyAddress, companyEmail, companyWebsite, companyRating, policyTypes) VALUES
-(101, 'ABC Insurance', '123 Main Street, Anytown, USA', 'info@abcinsurance.com', 'www.abcinsurance.com', 4, 'Home Insurance'),
-(102, 'XYZ Insurance', '456 Oak Ave, Somewhere, USA', 'info@xyzinsurance.com', 'www.xyzinsurance.com', 3, 'Auto Insurance'),
-(103, 'PQR Insurance', '789 Maple St, Nowhere, USA', 'info@pqinsurance.com', 'www.pqinsurance.com', 5, 'Home Insurance'),
-(104, 'LMN Insurance', '321 Elm St, Anytown, USA', 'info@lmninsurance.com', 'www.lmninsurance.com', 4, 'Motorcycle Insurance'),
-(105, 'EFG Insurance', '567 Cedar Rd, Somewhere, USA', 'info@efginsurance.com', 'www.efginsurance.com', 3, 'Motorcycle Insurance');
+INSERT INTO InsuranceCompany (taxationID, companyName, companyAddress, companyEmail, companyWebsite, companyRating) VALUES
+(101, 'ABC Insurance', '123 Main Street, Anytown, USA', 'info@abcinsurance.com', 'www.abcinsurance.com', 4),
+(102, 'XYZ Insurance', '456 Oak Ave, Somewhere, USA', 'info@xyzinsurance.com', 'www.xyzinsurance.com', 3),
+(103, 'PQR Insurance', '789 Maple St, Nowhere, USA', 'info@pqinsurance.com', 'www.pqinsurance.com', 5),
+(104, 'LMN Insurance', '321 Elm St, Anytown, USA', 'info@lmninsurance.com', 'www.lmninsurance.com', 4),
+(105, 'EFG Insurance', '567 Cedar Rd, Somewhere, USA', 'info@efginsurance.com', 'www.efginsurance.com', 3);
 
-INSERT INTO BikeEngine (engineID, manufacturingYear, engineType, engineDisplacement, engineWeight, engineFuelType, engineFuelEfficiency, engineTorque, engineHorsePower) VALUES
+INSERT INTO BikeEngine (engineID, manufacturingYear, engineType, engineDisplacement, engineWeight, engineFuelType, enginefuelEfficiency, engineTorque, engineHorsePower) VALUES
 (1, 2022, 'V-twin', 1200, 150, 'Petrol', '20 km/l', 100, 100),
 (2, 2021, 'Inline-four', 1000, 120, 'Petrol', '18 km/l', 90, 120),
 (3, 2023, 'Parallel-twin', 650, 80, 'Petrol', '25 km/l', 70, 80),
@@ -207,13 +213,13 @@ INSERT INTO BikeEngine (engineID, manufacturingYear, engineType, engineDisplacem
 (5, 2020, 'V-twin', 1600, 200, 'Petrol', '15 km/l', 150, 160);
 
 
-INSERT INTO Service (serviceID, serviceOnDate, serviceDescription, serviceCharges, newPartsCharges, serviceType)
+INSERT INTO Service (serviceID, serviceName, serviceCharges, newPartsCharges, serviceType)
 VALUES
-	(1, '2022-01-15', 'Oil change and filter replacement', 50, 20, 'Paid'),
-	(2, '2022-02-28', 'Brake pads replacement', 100, 60, 'Paid'),
-	(3, '2022-03-12', 'Chain cleaning and adjustment', 30, 0, 'Unpaid'),
-	(4, '2022-04-05', 'Tire replacement', 150, 80, 'Paid'),
-	(5, '2022-05-23', 'Battery replacement', 80, 40, 'Unpaid');
+	(1, 'Oil change and filter replacement', 50, 20, 'Paid'),
+	(2, 'Brake pads replacement', 100, 60, 'Paid'),
+	(3, 'Chain cleaning and adjustment', 30, 0, 'Unpaid'),
+	(4, 'Tire replacement', 150, 80, 'Paid'),
+	(5, 'Battery replacement', 80, 40, 'Unpaid');
 
 
 
@@ -266,14 +272,16 @@ VALUES
 
 
 
-INSERT INTO ServiceAppointment (appointmentID, appointmentDate, appointmentTime, approxServiceDetails, policyNumber, serviceID)
+INSERT INTO ServiceAppointment (appointmentID, appointmentDate, appointmentTime, approxServiceDetails, policyNumber)
 VALUES
-	(1, '2022-05-01', '10:00:00', 'Oil change, Brake pad replacement', 1, 3),
-	(2, '2022-05-03', '14:00:00', 'Chain adjustment, Tyre rotation', 2, 4),
-	(3, '2022-05-05', '11:00:00', 'Engine tuning, Spark plug replacement', 3, 2),
-	(4, '2022-05-06', '09:00:00', 'Battery replacement, Electrical system check', 4, 1),
-	(5, '2022-05-10', '13:00:00', 'Fuel system cleaning, Air filter replacement', 5, 5);
+	(1, '2022-05-01', '10:00:00', 'Oil change, Brake pad replacement', 1),
+	(2, '2022-05-03', '14:00:00', 'Chain adjustment, Tyre rotation', 2),
+	(3, '2022-05-05', '11:00:00', 'Engine tuning, Spark plug replacement', 3),
+	(4, '2022-05-06', '09:00:00', 'Battery replacement, Electrical system check', 4),
+	(5, '2022-05-10', '13:00:00', 'Fuel system cleaning, Air filter replacement', 5);
 
+INSERT INTO leadsTo (serviceID, appointmentID) VALUES
+(1,1),(2,2),(3,3),(4,4),(5,5);
 
 INSERT INTO schedules (customerID, bikeID, appointmentID)
 VALUES
@@ -299,3 +307,4 @@ VALUES
 (3, 3, 3),
 (4, 4, 4),
 (5, 5, 5);
+

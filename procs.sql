@@ -50,7 +50,6 @@ DELIMITER ;
 
 
 
-
 DELIMITER //
 DROP PROCEDURE IF EXISTS authenticate_user //
 CREATE PROCEDURE authenticate_user (

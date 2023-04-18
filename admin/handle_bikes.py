@@ -44,9 +44,9 @@ def read_bike():
     if len(results) == 0:
         print("No bikes found.")
     else:
-        print("{:<10} {:<30} {:<20} {:<10} {:<15} {:<25} {:<10} {:<10} {:<15}".format("Bike ID", "Bike Model Name", "Manufacturing Year", "Price", "Color", "Description", "Engine ID", "Showroom ID", "Policy Number"))
+        print("{:<10} {:<30} {:<20} {:<10} {:<15} {:<50} {:<10} {:<10} {:<15}".format("Bike ID", "Bike Model Name", "Manufacturing Year", "Price", "Color", "Description", "Engine ID", "Showroom ID", "Policy Number"))
         for result in results:
-            print("{:<10} {:<30} {:<20} {:<10} {:<15} {:<25} {:<10} {:<10} {:<15}".format(result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7], result[8]))
+            print("{:<10} {:<30} {:<20} {:<10} {:<15} {:<50} {:<10} {:<10} {:<15}".format(result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7], result[8]))
 
     conn.close()
 
@@ -84,10 +84,7 @@ def delete_bike():
 
     # Check if any rows were affected by the delete operation
     result = cur.fetchone()
-    if result[0] == 0:
-        print(result)
-    else:
-        print(f"Bike with ID {bike_id} deleted successfully.")
+    print(result)
 
     conn.commit()
     conn.close()
