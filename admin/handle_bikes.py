@@ -66,8 +66,11 @@ def update_bike():
 
     cur.callproc('update_bike', (bike_id, bike_model_name, bike_manufacturing_year, bike_price, bike_color, bike_description, engine_id, showroom_id, policy_number))
     
+    # Check if any rows were affected by the update operation
+    message = cur.fetchone()[0]
+    print(message)
+
     conn.commit()
-    print("Bike updated successfully!")
     conn.close()
 
 
