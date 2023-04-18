@@ -5,6 +5,7 @@ from admin import admin_options
 
 
 def do_login():
+    admin_options.print_admin_options()
     conn = connector.connect_to_database()
     username = input("Enter username : ")
     password = input("Enter password : ")

@@ -38,15 +38,15 @@ def read_bike():
     conn = connector.connect_to_database()
     cur = conn.cursor()
 
-    cur.execute("SELECT * FROM Bike")
+    cur.callproc('select_all_bikes')
     results = cur.fetchall()
 
     if len(results) == 0:
         print("No bikes found.")
     else:
-        print("{:<10} {:<30} {:<20} {:<10} {:<15} {:<50} {:<10} {:<10} {:<15}".format("Bike ID", "Bike Model Name", "Manufacturing Year", "Price", "Color", "Description", "Engine ID", "Showroom ID", "Policy Number"))
+        print("{:<10} {:<30} {:<20} {:<10} {:<10} {:<50} {:<5} {:<5} {:<5}".format("Bike ID", "Bike Model Name", "Manufacturing Year", "Price", "Color", "Description", "Engine ID", "Showroom ID", "Policy Number"))
         for result in results:
-            print("{:<10} {:<30} {:<20} {:<10} {:<15} {:<50} {:<10} {:<10} {:<15}".format(result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7], result[8]))
+            print("{:<10} {:<30} {:<20} {:<10} {:<10} {:<50} {:<5} {:<5} {:<5}".format(result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7], result[8]))
 
     conn.close()
 
@@ -64,10 +64,8 @@ def update_bike():
     showroom_id = input("Enter new showroom ID: ")
     policy_number = input("Enter new policy number: ")
 
-    cur.execute("""UPDATE Bike SET bikeModelName = %s, bikeManufacturingYear = %s, bikePrice = %s, bikeColor = %s,
-                bikeDescription = %s, engineID = %s, showroomID = %s, policyNumber = %s WHERE bikeID = %s""",
-                (bike_model_name, bike_manufacturing_year, bike_price, bike_color, bike_description, engine_id, showroom_id, policy_number, bike_id))
-
+    cur.callproc('update_bike', (bike_id, bike_model_name, bike_manufacturing_year, bike_price, bike_color, bike_description, engine_id, showroom_id, policy_number))
+    
     conn.commit()
     print("Bike updated successfully!")
     conn.close()
@@ -83,8 +81,8 @@ def delete_bike():
     cur.callproc('delete_bike', (bike_id,))
 
     # Check if any rows were affected by the delete operation
-    result = cur.fetchone()
-    print(result)
+    message = cur.fetchone()[0]
+    print(message)
 
     conn.commit()
     conn.close()
