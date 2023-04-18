@@ -1,10 +1,14 @@
 import curses
-from admin import InsuranceCompany
+from admin import insurance_company
+from admin import handle_employees
+from admin import handle_showrooms
+from admin import handle_bikes
 
 admin_options = [
     "Insurance Company",
     "Handle Bikes",
-    "Handle Employees"
+    "Handle Employees",
+    "Handle Showrooms"
 ]
 
 selected_option = 0
@@ -22,13 +26,13 @@ def print_options(stdscr, index, options):
 def print_admin_options():
     curses.wrapper(main)
     if selected_option == 0:
-        InsuranceCompany.start()
+        insurance_company.start()
     elif selected_option == 1:
-        print("Selected option: Handle Bikes")
-        # handle Handle Bikes functionality
+        handle_bikes.start()
     elif selected_option == 2:
-        print("Selected option: Handle Employees")
-        # handle Handle Employees functionality
+        handle_employees.start()
+    elif selected_option == 3:
+        handle_showrooms.start()
 
 
 def main(stdscr):
@@ -44,3 +48,4 @@ def main(stdscr):
         elif key == curses.KEY_DOWN:
             selected_option = (selected_option + 1) % len(admin_options)
         print_options(stdscr, selected_option, admin_options)
+

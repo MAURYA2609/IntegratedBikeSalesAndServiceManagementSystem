@@ -43,4 +43,3 @@ def do_signup():
 
     conn.commit()
     conn.close()
-
