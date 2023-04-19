@@ -12,7 +12,7 @@ selected_option = 0
 
 def print_options(stdscr, index, options):
     stdscr.clear()
-    stdscr.addstr("What do you want to do:\n\n")
+    stdscr.addstr("Customer Operations:\n\n")
     for i, option in enumerate(options):
         radio = "( )" if i != index else "(*)"
         stdscr.addstr(f"{radio} {option}\n")

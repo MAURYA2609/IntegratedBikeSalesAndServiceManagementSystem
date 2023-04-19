@@ -235,9 +235,8 @@ DELIMITER ;
 
 
 
-
-    DELIMITER //
-    DROP PROCEDURE IF EXISTS delete_showroom //
+DELIMITER //
+DROP PROCEDURE IF EXISTS delete_showroom //
     CREATE PROCEDURE delete_showroom(showroom_id INT)
     BEGIN
     DECLARE row_count INT;
@@ -251,3 +250,22 @@ DELIMITER ;
     END IF;
     END //
     DELIMITER ;
+
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS add_employee //
+CREATE PROCEDURE add_employee(
+    IN emp_id INT,
+    IN first_name VARCHAR(50),
+    IN last_name VARCHAR(50),
+    IN email VARCHAR(50),
+    IN phone VARCHAR(20),
+    IN address VARCHAR(100),
+    IN department VARCHAR(50),
+    IN salary DECIMAL(10, 2)
+)
+BEGIN
+    INSERT INTO Employees (employeeID, firstName, lastName, email, phone, address, department, salary)
+    VALUES (emp_id, first_name, last_name, email, phone, address, department, salary);
+END //
+DELIMITER ;

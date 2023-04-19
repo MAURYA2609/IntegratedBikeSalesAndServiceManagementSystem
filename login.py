@@ -1,4 +1,7 @@
 import hashlib
+import time
+
+import customer.customer_options
 import login_options
 import connector
 from admin import admin_options
@@ -13,29 +16,37 @@ def do_login():
     cur = conn.cursor()
     cur.callproc('authenticate_user', (username, encoded_password, ))
 
-    result = cur.fetchone()[0]
-
+    result = cur.fetchone()
     if result is not None:
-        if result == "admin":
+        if result[0] == "admin":
             print("Admin login successful!")
             admin_options.print_admin_options()
-        elif result == "customer":
+        elif result[0] == "customer":
             print("Customer Login successful!")
             customer_options.print_customer_options()
     else:
-        print("Invalid credentials. Please try again.")
+        print("Invalid credentials. Returning to main menu...")
+        time.sleep(2)
         login_options.proceed_login()
 
     conn.close()
 
 def do_signup():
-    conn = connector.connect_to_database()
-    username = input("Enter username : ")
-    password = input("Enter password : ")
-    encoded_password = hashlib.sha256(password.encode()).hexdigest()
+    try:
+        conn = connector.connect_to_database()
+        username = input("Enter username : ")
+        password = input("Enter password : ")
+        encoded_password = hashlib.sha256(password.encode()).hexdigest()
 
-    cur = conn.cursor()
-    cur.callproc('signup_user', (username, encoded_password))
-
-    conn.commit()
-    conn.close()
+        cur = conn.cursor()
+        cur.callproc('signup_user', (username, encoded_password))
+        print("Signed Up successfully!")
+        customer.customer_options.print_customer_options()
+        conn.commit()
+    except Exception as e:
+        print(f"Error: {e}")
+        print("Returning to main menu...")
+        time.sleep(2)
+        login_options.proceed_login()
+    finally:
+        conn.close()

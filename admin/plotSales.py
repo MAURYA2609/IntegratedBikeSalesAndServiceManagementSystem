@@ -1,11 +1,14 @@
+import curses
 import math
 
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 
+import admin.admin_options
 import connector
 
+stdscr = curses.initscr()
 def start():
     plotSalesChart()
 
@@ -30,3 +33,4 @@ def plotSalesChart():
 
     # display the chart
     plt.show()
+    admin.admin_options.print_admin_options()

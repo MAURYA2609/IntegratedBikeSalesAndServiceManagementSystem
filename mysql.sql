@@ -186,7 +186,7 @@ CREATE TABLE makes (
 	bookingiD INT,
 
 	CONSTRAINT makes_bike_fk FOREIGN KEY (bikeID) REFERENCES Bike(bikeID)
-		ON DELETE RESTRICT
+		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 
 	CONSTRAINT makes_customer_fk FOREIGN KEY (customerID) REFERENCES Customer(customerID)
