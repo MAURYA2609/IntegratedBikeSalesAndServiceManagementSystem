@@ -75,7 +75,7 @@ BEGIN
     DECLARE bike_count INT;
 
     -- check if the bike with given id exists or not
-    SELECT COUNT(*) INTO bike_count FROM Bike WHERE bikeID = bike_id;
+    SELECT COUNT(*) INTO bike_count FROM Bike WHERE bikeID = in_bike_id;
 
     IF bike_count = 0 THEN
         -- If the bike_id doesn't exist, show a message
@@ -106,17 +106,16 @@ BEGIN
     END IF;
 
     -- Update the bike in the Bike table
-    UPDATE Bike
-    SET bikeModelName = IFNULL(NULLIF(in_bike_model_name,''), bikeModelName),
-        bikeManufacturingYear = IFNULL(NULLIF(in_bike_manufacturing_year,0), bikeManufacturingYear),
-        bikePrice = IFNULL(NULLIF(in_bike_price,0.0), bikePrice),
-        bikeColor = IFNULL(NULLIF(in_bike_color,''), bikeColor),
-        bikeDescription = IFNULL(NULLIF(in_bike_description,''), bikeDescription),
-        engineID = IFNULL(NULLIF(in_engine_id,0), engineID),
-        showroomID = IFNULL(NULLIF(in_showroom_id,0), showroomID),
-        policyNumber = IFNULL(NULLIF(in_policy_number,0), policyNumber)
-    WHERE bikeID = in_bike_id;
-
+	UPDATE Bike
+	SET bikeModelName = CASE WHEN in_bike_model_name IS NULL OR in_bike_model_name = '' THEN bikeModelName ELSE in_bike_model_name END,
+    bikeManufacturingYear = COALESCE(in_bike_manufacturing_year, bikeManufacturingYear),
+    bikePrice = COALESCE(in_bike_price, bikePrice),
+    bikeColor = CASE WHEN in_bike_color IS NULL OR in_bike_color = '' THEN bikeColor ELSE in_bike_color END,
+    bikeDescription = CASE WHEN in_bike_description IS NULL THEN bikeDescription ELSE in_bike_description END,
+    engineID = COALESCE(in_engine_id, engineID),
+    showroomID = COALESCE(in_showroom_id, showroomID),
+    policyNumber = COALESCE(in_policy_number, policyNumber)
+	WHERE bikeID = in_bike_id;
 END $$
 
 DELIMITER ;
@@ -234,9 +233,8 @@ DELIMITER ;
     DELIMITER ;
 
 
-
 DELIMITER //
-DROP PROCEDURE IF EXISTS delete_showroom //
+    DROP PROCEDURE IF EXISTS delete_showroom //
     CREATE PROCEDURE delete_showroom(showroom_id INT)
     BEGIN
     DECLARE row_count INT;
@@ -249,23 +247,81 @@ DROP PROCEDURE IF EXISTS delete_showroom //
         SELECT CONCAT('Showroom with ID ', showroom_id, ' deleted successfully.') AS message;
     END IF;
     END //
-    DELIMITER ;
+DELIMITER ;
+
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS update_bike_availability $$
+CREATE PROCEDURE update_bike_availability(
+    IN p_bikeID INT
+)
+BEGIN
+    UPDATE Bike SET isAvailable = 0 WHERE bikeID = p_bikeID;
+END $$
+DELIMITER ;
+
 
 
 DELIMITER //
 DROP PROCEDURE IF EXISTS add_employee //
 CREATE PROCEDURE add_employee(
     IN emp_id INT,
-    IN first_name VARCHAR(50),
-    IN last_name VARCHAR(50),
-    IN email VARCHAR(50),
-    IN phone VARCHAR(20),
-    IN address VARCHAR(100),
-    IN department VARCHAR(50),
-    IN salary DECIMAL(10, 2)
+    IN name VARCHAR(255),
+    IN email VARCHAR(255),
+    IN phone VARCHAR(10),
+    IN salary INT,
+    IN designation VARCHAR(255),
+    IN joinDate DATE,
+    IN showroom_id INT
 )
 BEGIN
-    INSERT INTO Employees (employeeID, firstName, lastName, email, phone, address, department, salary)
-    VALUES (emp_id, first_name, last_name, email, phone, address, department, salary);
+    INSERT INTO Employees (employeeID, employeeName, employeeEmail, employeePhone, employeeSalary, employeeDesignation, employeeJoiningDate, showroomID)
+    VALUES (emp_id, name, email, phone, salary, designation, joinDate, showroom_id);
+END //
+DELIMITER ;
+
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS select_all_employees //
+CREATE PROCEDURE select_all_employees()
+BEGIN
+    SELECT * FROM Employees;
+END //
+DELIMITER ;
+
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS update_employee //
+CREATE PROCEDURE update_employee(
+	IN emp_id INT,
+    IN name VARCHAR(255),
+    IN email VARCHAR(255),
+    IN phone VARCHAR(10),
+    IN salary INT,
+    IN designation VARCHAR(255),
+    IN joinDate DATE,
+    IN showroom_id INT
+)
+BEGIN
+    UPDATE Employees
+    SET name = name,
+		employeePhone = phone,
+        employeeEmail = email,
+		employeeSalary = salary,
+        employeeDesignation = designation,
+        employeeJoiningDate = joinDate,
+        showroomID = showroom_id
+    WHERE employeeID = employeeID;
+END //
+DELIMITER ;
+
+
+DELIMITER //
+DROP PROCEDURE IF EXISTS delete_employee //
+CREATE PROCEDURE delete_employee(IN emp_id INT)
+BEGIN
+  DELETE FROM employees WHERE id = emp_id;
+  SELECT ROW_COUNT();
 END //
 DELIMITER ;

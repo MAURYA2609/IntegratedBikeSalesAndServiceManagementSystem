@@ -46,8 +46,8 @@ def main(stdscr, results):
             selected_option = (selected_option + 1) % len(results)
         print_options(stdscr, selected_option, results)
 
-        selected_bike = results[selected_option]
-        proceed_to_buy(selected_bike)
+    selected_bike = results[selected_option]
+    proceed_to_buy(selected_bike)
 
 
 def proceed_to_buy(selected_bike):
@@ -55,9 +55,5 @@ def proceed_to_buy(selected_bike):
     conn = connector.connect_to_database()
     cur = conn.cursor()
     cur.callproc('update_bike_availability', (selected_bike[0],))
-    key = stdscr.getch()
     cur.close()
     conn.commit()
-    if key == ord("\n"):  # enter key
-        customer.customer_options.print_customer_options()
-

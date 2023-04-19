@@ -69,11 +69,11 @@ def read_bike():
                                                                                        "Engine ID", "Showroom ID",
                                                                                        "Policy Number"))
             for result in results:
-                print("{:<10} {:<30} {:<20} {:<10} {:<10} {:<50} {:<5} {:<5} {:<5}".format(result[0], result[1],
-                                                                                           result[2], result[3],
-                                                                                           result[4], result[5],
-                                                                                           result[6], result[7],
-                                                                                           result[8]))
+                print("{:<10} {:<30} {:<20} {:<10} {:<10} {:<50} {:<5} {:<5} {:<5}".format(result[0], result[2],
+                                                                                           result[3], result[4],
+                                                                                           result[5], result[6],
+                                                                                           result[7], result[8],
+                                                                                           result[9]))
     except Exception as e:
         print(f"Error: {e}")
     finally:
@@ -102,9 +102,8 @@ def update_bike():
     try:
         cur.callproc('update_bike', (bike_id, bike_model_name, bike_manufacturing_year, bike_price, bike_color, bike_description, engine_id, showroom_id, policy_number))
         # Check if any rows were affected by the update operation
-        message = cur.fetchone()[0]
-        print(message)
         conn.commit()
+        print("Updated Successfully!!")
     except Exception as e:
         print(f"Error updating bike: {e}")
         conn.rollback()

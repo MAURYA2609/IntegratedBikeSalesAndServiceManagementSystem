@@ -22,18 +22,15 @@ def add_employee():
         cur = conn.cursor()
 
         employeeID = input("Enter employee ID: ")
-        firstName = input("Enter first name: ")
-        lastName = input("Enter last name: ")
+        name = input("Enter your Name: ")
         email = input("Enter email: ")
         phone = input("Enter phone number: ")
-        address = input("Enter address: ")
-        department = input("Enter department: ")
+        designation = input("Enter designation: ")
         salary = input("Enter salary: ")
+        joinDate = input("Enter joining date: ")
+        showroomID = input("Enter showroom ID: ")
 
-        cur.execute("""INSERT INTO Employees
-                    (employeeID, firstName, lastName, email, phone, address, department, salary)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
-                    (employeeID, firstName, lastName, email, phone, address, department, salary))
+        cur.callproc('add_employee', (employeeID, name, email, phone, salary, designation, joinDate, showroomID))
 
         conn.commit()
         print("Employee added successfully!")
@@ -48,21 +45,20 @@ def add_employee():
         if key == ord("\n"):
             admin.admin_options.print_admin_options()
 
-
 def read_employee():
     try:
         conn = connector.connect_to_database()
         cur = conn.cursor()
 
-        cur.execute("SELECT * FROM Employees")
+        cur.callproc('select_all_employees')
         results = cur.fetchall()
 
         if len(results) == 0:
             print("No employees found.")
         else:
-            print("{:<15} {:<15} {:<15} {:<25} {:<10} {:<40} {:<5} {:<10}".format("Employee ID", "First Name", "Last Name", "Email", "Phone", "Address", "Department", "Salary"))
+            print("{:<15} {:<15} {:<25} {:<25} {:<10} {:<40} {:<5} {:<10}".format("Employee ID", "Name", "Email", "Phone", "Salary", "Designation", "Joining Date", "Showroom ID"))
             for result in results:
-                print("{:<15} {:<15} {:<15} {:<25} {:<10} {:<40} {:<5} {:<10}".format(result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7]))
+                print("{:<15} {:<15} {:<25} {:<25} {:<10} {:<40} {:<5} {:<10}".format(result[0], result[1], result[3], result[2], result[4], result[5], result[6], result[7]))
     except Exception as e:
         print(f"Error: {e}")
     finally:
@@ -74,32 +70,31 @@ def read_employee():
             admin.admin_options.print_admin_options()
 
 
+
 def update_employee():
-    conn = None
+    conn = connector.connect_to_database()
+    cur = conn.cursor()
+    employeeID = input("Enter employee ID to update: ")
+    name = input("Enter updated Name: ")
+    email = input("Enter updated email: ")
+    phone = input("Enter updated phone number: ")
+    designation = input("Enter updated designation: ")
+    salary = input("Enter updated salary: ")
+    joinDate = input("Enter updated joining date: ")
+    showroomID = input("Enter updated showroom ID: ")
+
     try:
-        conn = connector.connect_to_database()
-        cur = conn.cursor()
-
-        employeeID = input("Enter employee ID to update: ")
-        firstName = input("Enter new first name: ")
-        lastName = input("Enter new last name: ")
-        email = input("Enter new email: ")
-        phone = input("Enter new phone number: ")
-        address = input("Enter new address: ")
-        department = input("Enter new department: ")
-        salary = input("Enter new salary: ")
-
-        cur.execute("""UPDATE Employees SET firstName = %s, lastName = %s, email = %s, phone = %s,
-                    address = %s, department = %s, salary = %s WHERE employeeID = %s""",
-                    (firstName, lastName, email, phone, address, department, salary, employeeID))
-
+        cur.callproc('update_employee', (employeeID, name, email, phone, salary, designation, joinDate, showroomID))
+        # Check if any rows were affected by the update operation
+        message = cur.fetchone()[0]
+        print(message)
         conn.commit()
         print("Employee updated successfully!")
-    except connector.errors.Error as e:
-        print(f"Error: {e}")
+    except Exception as e:
+        print(f"Error updating bike: {e}")
+        conn.rollback()
     finally:
-        if conn:
-            conn.close()
+        conn.close()
         print("Press Enter to return to Main Menu...")
         key = stdscr.getch()
         if key == ord("\n"):
@@ -113,7 +108,8 @@ def delete_employee():
 
         employee_id = input("Enter employee ID of the employee you want to delete: ")
 
-        # Call the stored procedure to delete the employee with the given employee ID
+        # Call the stored procedure
+        # to delete the employee with the given employee ID
         cur.callproc('delete_employee', (employee_id,))
 
         # Check if any rows were affected by the delete operation

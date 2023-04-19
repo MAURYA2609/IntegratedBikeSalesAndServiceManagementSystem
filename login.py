@@ -41,8 +41,8 @@ def do_signup():
         cur = conn.cursor()
         cur.callproc('signup_user', (username, encoded_password))
         print("Signed Up successfully!")
-        customer.customer_options.print_customer_options()
         conn.commit()
+        customer.customer_options.print_customer_options()
     except Exception as e:
         print(f"Error: {e}")
         print("Returning to main menu...")

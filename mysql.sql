@@ -2,14 +2,6 @@ create database ibssms;
 
 use ibssms;
 
-
-create table users(
-	id integer PRIMARY KEY NOT NULL auto_increment,
-	username varchar(255) not null,
-	password varchar(255) not null,
-	user_type varchar(255) default "customer"
-);
-
 CREATE TABLE InsuranceCompany (
 	taxationID INT PRIMARY KEY NOT NULL,
 	companyName VARCHAR(255),
@@ -91,14 +83,21 @@ CREATE TABLE InsurancePolicy (
 );
 
 
+create table users(
+	id integer PRIMARY KEY NOT NULL auto_increment,
+	username varchar(255) not null,
+	password varchar(255) not null,
+	user_type varchar(255) default "customer"
+);
 
 CREATE TABLE Bike(
 	bikeID INT PRIMARY KEY NOT NULL,
+    isAvailable INT default 1,
 	bikeModelName VARCHAR(255),
 	bikeManufacturingYear INT,
-	bikePrice FLOAT,
+	bikePrice INT,
 	bikeColor VARCHAR(255),
-	bikeDescription TEXT,
+	bikeDescription VARCHAR(255),
 	engineID INT ,
 	showroomID INT,
 	policyNumber INT ,
@@ -172,7 +171,7 @@ CREATE TABLE schedules(
 		ON UPDATE CASCADE,
 
 	CONSTRAINT schedule_bike_fk FOREIGN KEY (bikeID) REFERENCES Bike(bikeID)
-		ON DELETE RESTRICT
+		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 
 	CONSTRAINT schedule_appointment_fk FOREIGN KEY (appointmentID) REFERENCES ServiceAppointment(appointmentID)
@@ -291,13 +290,20 @@ VALUES
 	(4, 2, 4),
 	(5, 4, 5);
 
+
 INSERT INTO Booking (bookingID, bookingDate, deliveryDate, isDelivered, paymentMethod, paymentDate, paymentAmount, invoiceNumber)
 VALUES
     (1, '2023-01-01', '2023-01-10', 1, 'Debit Card', '2022-01-01', 1000, 12345),
     (2, '2023-01-02', '2023-01-11', 1, 'Credit Card', '2022-01-02', 2000, 12346),
     (3, '2023-01-03', '2023-01-12', 0, 'Debit Card', '2022-01-03', 3000, 12347),
     (4, '2023-01-04', '2023-01-13', 0, 'Credit Card', '2022-01-04', 4000, 12348),
-    (5, '2023-01-05', '2023-01-14', 1, 'Debit Card', '2022-01-05', 5000, 12349);
+    (5, '2023-01-05', '2023-01-14', 1, 'Debit Card', '2022-01-05', 5000, 12349),
+    (6, '2023-01-01', '2023-01-10', 1, 'Debit Card', '2022-01-01', 1000, 12345),
+    (7, '2023-02-01', '2023-01-10', 1, 'Debit Card', '2022-01-01', 1000, 12345),
+    (8, '2023-02-02', '2023-01-11', 1, 'Credit Card', '2022-01-02', 2000, 12346),
+    (9, '2023-02-03', '2023-01-12', 0, 'Debit Card', '2022-01-03', 3000, 12347),
+    (10, '2023-03-04', '2023-01-13', 0, 'Credit Card', '2022-01-04', 4000, 12348),
+    (11, '2023-03-05', '2023-01-14', 1, 'Debit Card', '2022-01-05', 5000, 12349);
 
 
 INSERT INTO makes (bikeID, customerID, bookingiD)
@@ -307,4 +313,3 @@ VALUES
 (3, 3, 3),
 (4, 4, 4),
 (5, 5, 5);
-
